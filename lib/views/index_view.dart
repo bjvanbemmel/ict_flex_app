@@ -19,18 +19,20 @@ class _IndexViewState extends State<IndexView> {
     final _feedService = FeedService();
     final _feedState = FeedState();
     final _pageState = PageState();
+    final _scaffoldKey = GlobalKey<ScaffoldState>();
 
     List<Article>? _articles;
 
     @override
     void initState() {
         _pageState.article = null;
+        _storageService.list(Article.table).then((x) => setState(() {
+            _articles = x.map((y) => Article.fromMap(y)).toList();
+            _fetchArticles();
+        }));
 
-        _feedService.articles();
         _feedState.addListener(_updateArticles);
 
-        _fetchArticles();
-        _updateArticles();
         super.initState();
     }
 
@@ -40,7 +42,9 @@ class _IndexViewState extends State<IndexView> {
         super.dispose();
     }
 
-    void _fetchArticles() async {
+    Future<void> _fetchArticles() async {
+        List<Article>? old = List.from(_articles ?? []);
+
         try {
             List<Article> newArticles = await _feedService.articles();
             _feedState.articles = newArticles;
@@ -49,22 +53,42 @@ class _IndexViewState extends State<IndexView> {
             }
 
         } catch (e) {
+            _newSnackbar('Could not reach server');
             _feedState.articles = (await _storageService.list(Article.table))
-            .map((x) => Article.fromMap(x)).toList();
+                .map((x) => Article.fromMap(x)).toList();
         }
+
+        if (_feedService.diff(List.from(_articles ?? []), old).isEmpty) _newSnackbar('No new articles found');
     }
 
     void _updateArticles() => setState(() {
         _articles = _feedState.articles;
     });
 
+    void _newSnackbar(String msg) {
+        if (_scaffoldKey.currentContext == null) return;
+
+        ScaffoldMessenger.of(_scaffoldKey.currentContext!).showSnackBar(
+            SnackBar(
+                content: Text(
+                    msg,
+                    style: Theme.of(context).textTheme.labelSmall,
+                ),
+            )
+        );
+    }
+
     @override
     Widget build(BuildContext context) {
         return Scaffold(
+            key: _scaffoldKey,
             appBar: const AppBarComponent(),
             body: _articles == null
                 ? const Text('Loading...')
-                : ArticleListComponent(articles: _articles ?? []),
+                : ArticleListComponent(
+                    articles: _articles ?? [],
+                    onRefresh: _fetchArticles,
+                ),
         );
     }
 }

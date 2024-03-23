@@ -8,6 +8,7 @@ import 'package:ict_flex_app/types/article.dart';
 class ArticleListComponent extends StatelessWidget {
     ArticleListComponent({
         super.key,
+        required this.onRefresh,
         required this.articles,
     });
 
@@ -15,6 +16,7 @@ class ArticleListComponent extends StatelessWidget {
     final _storageService = StorageService();
     final _feedService = FeedService();
     final _feedState = FeedState();
+    final Future<void> Function() onRefresh;
 
     @override
     Widget build(BuildContext context) {
@@ -29,23 +31,7 @@ class ArticleListComponent extends StatelessWidget {
 
         return RefreshIndicator(
             color: Theme.of(context).primaryColor,
-            onRefresh: () async {
-                int oldHash = articles.hashCode;
-                try {
-                    List<Article> newArticles = await _feedService.articles();
-                    _feedState.articles = newArticles;
-                    for (var art in newArticles) {
-                        _storageService.insert(art);
-                    }
-
-                } catch (e) {
-                    newSnackbar('Could not reach server');
-                    _feedState.articles = (await _storageService.list(Article.table))
-                        .map((x) => Article.fromMap(x)).toList();
-                }
-
-                if (oldHash == articles.hashCode) newSnackbar('No new articles found');
-            },
+            onRefresh: onRefresh,
             child: ListView(
                 children: <Widget>[
                     for (var article in articles) ArticleTileComponent(

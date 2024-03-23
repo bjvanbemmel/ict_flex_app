@@ -3,6 +3,13 @@ import 'package:ict_flex_app/types/article.dart';
 import 'package:xml/xml.dart';
 
 class FeedService {
+    List<Article> diff(List<Article>? articles, List<Article>? old) {
+        if (articles == null || old == null) return [];
+
+        articles.removeWhere((x) => old.any((y) => y.hash == x.hash));
+        return articles;
+    }
+
     Future<List<Article>> articles() async {
         var url = Uri.https('rss.bjvanbemmel.nl', 'ict-flex');
         var response = await http.read(url);
