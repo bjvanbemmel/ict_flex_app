@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:ict_flex_app/components/app_bar_component.dart';
 import 'package:ict_flex_app/components/article_list_component.dart';
 import 'package:ict_flex_app/services/feed_service.dart';
@@ -82,15 +83,20 @@ class _IndexViewState extends State<IndexView> {
 
     @override
     Widget build(BuildContext context) {
-        return Scaffold(
-            key: _scaffoldKey,
-            appBar: const AppBarComponent(),
-            body: _articles == null
+        return AnnotatedRegion<SystemUiOverlayStyle>(
+            value: SystemUiOverlayStyle(
+                systemNavigationBarColor: Theme.of(context).colorScheme.background,
+            ),
+            child: Scaffold(
+                key: _scaffoldKey,
+                appBar: const AppBarComponent(),
+                body: _articles == null
                 ? const Text('Loading...')
                 : ArticleListComponent(
                     articles: _articles ?? [],
                     onRefresh: _fetchArticles,
                 ),
+            ),
         );
     }
 }
