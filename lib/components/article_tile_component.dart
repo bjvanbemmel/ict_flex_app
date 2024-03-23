@@ -21,8 +21,22 @@ class ArticleTileComponent extends StatelessWidget {
                 _pageState.article = article;
 
                 Navigator.of(context).push(
-                    MaterialPageRoute(
-                        builder: (context) => ArticleView(article: article,),
+                    PageRouteBuilder(
+                        pageBuilder: (context, animation, anotherAnimation) =>
+                            ArticleView(article: article),
+                        transitionsBuilder: (context, animation, anotherAnimation, child) {
+                            const begin = Offset(1.0, 0.0);
+                            const end = Offset.zero;
+                            const curve = Curves.ease;
+
+                            var tween = Tween(begin: begin, end: end)
+                                .chain(CurveTween(curve: curve));
+
+                            return SlideTransition(
+                                position: animation.drive(tween),
+                                child: child,
+                            );
+                        }
                     ),
                 );
             },
