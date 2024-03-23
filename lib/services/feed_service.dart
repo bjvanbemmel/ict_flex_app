@@ -1,12 +1,8 @@
 import 'package:http/http.dart' as http;
-import 'package:ict_flex_app/state/feed_state.dart';
 import 'package:ict_flex_app/types/article.dart';
 import 'package:xml/xml.dart';
 
 class FeedService {
-    final FeedState _feedState = FeedState();
-    static DateTime? lastUpdated;
-
     Future<List<Article>> articles() async {
         var url = Uri.https('rss.bjvanbemmel.nl', 'ict-flex');
         var response = await http.read(url);
@@ -41,9 +37,6 @@ class FeedService {
 
             articles.add(article);
         }
-
-        lastUpdated = DateTime.now();
-        _feedState.articles = articles;
 
         return articles;
     }

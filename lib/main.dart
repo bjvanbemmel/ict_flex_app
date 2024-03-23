@@ -1,7 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:ict_flex_app/services/storage_service.dart';
 import 'package:ict_flex_app/views/index_view.dart';
 
-void main() {
+void main() async {
+    WidgetsFlutterBinding.ensureInitialized();
+
+    final storageService = StorageService();
+    await storageService.connect();
+
     runApp(const MyApp());
 }
 
