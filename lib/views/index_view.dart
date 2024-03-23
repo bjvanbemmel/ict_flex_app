@@ -56,6 +56,8 @@ class _IndexViewState extends State<IndexView> {
             _newSnackbar('Could not reach server');
             _feedState.articles = (await _storageService.list(Article.table))
                 .map((x) => Article.fromMap(x)).toList();
+
+            return;
         }
 
         if (_feedService.diff(List.from(_articles ?? []), old).isEmpty) _newSnackbar('No new articles found');
