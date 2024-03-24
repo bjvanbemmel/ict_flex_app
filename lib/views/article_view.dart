@@ -1,16 +1,29 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:ict_flex_app/components/app_bar_component.dart';
+import 'package:ict_flex_app/services/storage_service.dart';
+import 'package:ict_flex_app/state/feed_state.dart';
 import 'package:ict_flex_app/types/article.dart';
+import 'package:ict_flex_app/types/read.dart';
 import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class ArticleView extends StatelessWidget {
-    const ArticleView ({
+    ArticleView ({
         super.key,
         required this.article,
-    });
+    }) {
+        _storageService.insert(Read(
+            articleId: article.hash,
+        ));
 
+        _storageService.list(Read.table).then((x) =>
+            _feedState.reads = Read.fromMapList(x)
+        );
+    }
+
+    final _storageService = StorageService();
+    final _feedState = FeedState();
     final Article article;
 
     @override

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ict_flex_app/types/article.dart';
+import 'package:ict_flex_app/types/read.dart';
 
 class FeedState extends ChangeNotifier {
     static final FeedState _feedState = FeedState._internal();
@@ -14,6 +15,13 @@ class FeedState extends ChangeNotifier {
     List<Article> get articles => _articles;
     set articles(List<Article> newArticles) {
         _articles = newArticles;
+        notifyListeners();
+    }
+
+    List<Read> _reads = [];
+    List<Read> get reads => _reads;
+    set reads(List<Read> newReads) {
+        _reads = newReads;
         notifyListeners();
     }
 }

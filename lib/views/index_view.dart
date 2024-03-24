@@ -7,6 +7,7 @@ import 'package:ict_flex_app/services/storage_service.dart';
 import 'package:ict_flex_app/state/feed_state.dart';
 import 'package:ict_flex_app/state/page_state.dart';
 import 'package:ict_flex_app/types/article.dart';
+import 'package:ict_flex_app/types/read.dart';
 
 class IndexView extends StatefulWidget {
     const IndexView({super.key});
@@ -23,14 +24,12 @@ class _IndexViewState extends State<IndexView> {
     final _scaffoldKey = GlobalKey<ScaffoldState>();
 
     List<Article>? _articles;
+    List<Read>? _reads;
 
     @override
     void initState() {
         _pageState.article = null;
-        _storageService.list(Article.table).then((x) => setState(() {
-            _articles = Article.fromMapList(x);
-            _fetchArticles();
-        }));
+        _initItems();
 
         _feedState.addListener(_updateArticles);
 
@@ -43,12 +42,20 @@ class _IndexViewState extends State<IndexView> {
         super.dispose();
     }
 
+    void _initItems() async {
+        _articles = Article.fromMapList(await _storageService.list(Article.table));
+        _reads = Read.fromMapList(await _storageService.list(Read.table));
+        _fetchArticles();
+    }
+
     Future<void> _fetchArticles() async {
         try {
             List<Article> snapshot = List.from(_articles ?? []);
 
             List<Article> newArticles = await _feedService.articles();
             _feedState.articles = newArticles;
+
+            _feedState.reads = Read.fromMapList(await _storageService.list(Read.table));
 
             final List<Article> added = _feedService.diff(newArticles, snapshot);
             for (var art in added) {
@@ -76,6 +83,7 @@ class _IndexViewState extends State<IndexView> {
 
     void _updateArticles() => setState(() {
         _articles = _feedState.articles;
+        _reads = _feedState.reads;
     });
 
     void _newSnackbar(String msg) {
@@ -100,10 +108,9 @@ class _IndexViewState extends State<IndexView> {
             child: Scaffold(
                 key: _scaffoldKey,
                 appBar: const AppBarComponent(),
-                body: _articles == null
-                ? const Text('Loading...')
-                : ArticleListComponent(
+                body: ArticleListComponent(
                     articles: _articles ?? [],
+                    reads: _reads ?? [],
                     onRefresh: _fetchArticles,
                 ),
             ),

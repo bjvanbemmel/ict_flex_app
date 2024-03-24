@@ -9,9 +9,11 @@ class ArticleTileComponent extends StatelessWidget {
     ArticleTileComponent({
         super.key,
         required this.article,
+        required this.read,
     });
 
     final Article article;
+    final bool read;
     final PageState _pageState = PageState();
 
     @override
@@ -41,26 +43,29 @@ class ArticleTileComponent extends StatelessWidget {
                 );
             },
             onLongPress: () async => await Clipboard.setData(ClipboardData(text: article.uri.toString())),
-            child: Container(
-                margin: const EdgeInsets.only(top: 16.0, bottom: 16.0, left: 16.0, right: 16.0),
-                width: MediaQuery.sizeOf(context).width,
-                child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                        Text(
-                            article.title,
-                            overflow: TextOverflow.ellipsis,
-                            style: Theme.of(context).textTheme.labelMedium,
-                        ),
-                        Text(
-                            article.content,
-                            overflow: TextOverflow.ellipsis,
-                        ),
-                        Text(
-                            DateFormat('d MMMM yyyy').format(article.createdAt),
-                            style: Theme.of(context).textTheme.labelSmall
-                        ),
-                    ],
+            child: Opacity(
+                opacity: read ? 0.5 : 1,
+                child: Container(
+                    margin: const EdgeInsets.only(top: 16.0, bottom: 16.0, left: 16.0, right: 16.0),
+                    width: MediaQuery.sizeOf(context).width,
+                    child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                            Text(
+                                article.title,
+                                overflow: TextOverflow.ellipsis,
+                                style: Theme.of(context).textTheme.labelMedium,
+                            ),
+                            Text(
+                                article.content,
+                                overflow: TextOverflow.ellipsis,
+                            ),
+                            Text(
+                                DateFormat('d MMMM yyyy').format(article.createdAt),
+                                style: Theme.of(context).textTheme.labelSmall
+                            ),
+                        ],
+                    ),
                 ),
             ),
         );

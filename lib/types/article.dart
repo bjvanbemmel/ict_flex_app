@@ -2,7 +2,6 @@ import 'package:ict_flex_app/types/model.dart';
 
 class Article implements Model<String> {
     Article({
-        id,
         required this.hash,
         required this.title,
         required this.uri,

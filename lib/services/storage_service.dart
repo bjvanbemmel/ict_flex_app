@@ -14,20 +14,35 @@ class StorageService {
     Future<void> connect() async {
         db = await openDatabase(
             DATABASE_PATH,
-            onCreate: (db, _ ) async => await db.execute(
-                '''CREATE TABLE articles (
-                    id         TEXT      PRIMARY KEY  NOT NULL,
-                    title      TEXT                   NOT NULL,
-                    uri        TEXT                   NOT NULL,
-                    content    TEXT                   NOT NULL,
-                    created_at INTEGER                NOT NULL
-                )'''
-            ),
+            onCreate: (db, _ ) async {
+                await db.execute('''
+                    CREATE TABLE articles (
+                        id         TEXT      PRIMARY KEY  NOT NULL,
+                        title      TEXT                   NOT NULL,
+                        uri        TEXT                   NOT NULL,
+                        content    TEXT                   NOT NULL,
+                        created_at INTEGER                NOT NULL
+                    );
+                ''');
+
+                await db.execute('''
+                    CREATE TABLE reads(
+                        article_id  TEXT  NOT NULL,
+                        CONSTRAINT fk_articles
+                        FOREIGN KEY (article_id)
+                        REFERENCES articles (id)
+                        ON DELETE CASCADE
+                    );
+                ''');
+            },
             version: 1,
         );
     }
 
     void close() async => await db.close();
+
+    Future<dynamic> query(String query) async =>
+        await db.rawQuery(query);
 
     Future<List<Map<String, Object?>>> list(String table) async =>
         await db.query(table);

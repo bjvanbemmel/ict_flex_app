@@ -1,34 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:ict_flex_app/components/article_tile_component.dart';
-import 'package:ict_flex_app/services/feed_service.dart';
-import 'package:ict_flex_app/services/storage_service.dart';
-import 'package:ict_flex_app/state/feed_state.dart';
 import 'package:ict_flex_app/types/article.dart';
+import 'package:ict_flex_app/types/read.dart';
 
 class ArticleListComponent extends StatelessWidget {
-    ArticleListComponent({
+    const ArticleListComponent({
         super.key,
         required this.onRefresh,
         required this.articles,
+        required this.reads,
     });
 
     final List<Article> articles;
-    final _storageService = StorageService();
-    final _feedService = FeedService();
-    final _feedState = FeedState();
+    final List<Read> reads;
     final Future<void> Function() onRefresh;
 
     @override
     Widget build(BuildContext context) {
-        void newSnackbar(String msg) => ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-                content: Text(
-                    msg,
-                    style: Theme.of(context).textTheme.labelSmall,
-                ),
-            )
-        );
-
         return RefreshIndicator(
             color: Theme.of(context).primaryColor,
             onRefresh: onRefresh,
@@ -36,6 +24,7 @@ class ArticleListComponent extends StatelessWidget {
                 children: <Widget>[
                     for (var article in articles) ArticleTileComponent(
                         article: article,
+                        read: reads.any((x) => x.articleId == article.hash),
                     ),
                 ],
             ),
