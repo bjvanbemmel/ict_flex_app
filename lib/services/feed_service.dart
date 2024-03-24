@@ -3,11 +3,15 @@ import 'package:ict_flex_app/types/article.dart';
 import 'package:xml/xml.dart';
 
 class FeedService {
-    List<Article> diff(List<Article>? articles, List<Article>? old) {
-        if (articles == null || old == null) return [];
+    List<Article> diff(List<Article>? A, List<Article>? B) {
+        if (A == null || B == null) return [];
 
-        articles.removeWhere((x) => old.any((y) => y.hash == x.hash));
-        return articles;
+        final List<Article> a = List.from(A);
+        final List<Article> b = List.from(B);
+
+        a.removeWhere((x) => b.any((y) => y.hash == x.hash));
+
+        return a;
     }
 
     Future<List<Article>> articles() async {

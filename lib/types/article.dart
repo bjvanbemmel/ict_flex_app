@@ -1,7 +1,8 @@
 import 'package:ict_flex_app/types/model.dart';
 
-class Article implements Model {
-    const Article({
+class Article implements Model<String> {
+    Article({
+        id,
         required this.hash,
         required this.title,
         required this.uri,
@@ -21,8 +22,11 @@ class Article implements Model {
     String tableName() => table;
 
     @override
+    String id() => hash;
+
+    @override
     Map<String, Object?> toMap() => {
-        'hash': hash,
+        'id': hash,
         'title': title,
         'uri': uri.toString(),
         'created_at': createdAt.millisecondsSinceEpoch,
@@ -30,7 +34,7 @@ class Article implements Model {
     };
 
     static Article fromMap(Map<String, Object?> map) => Article(
-        hash: map['hash'] as String,
+        hash: map['id'] as String,
         title: map['title'] as String,
         uri: Uri.parse(map['uri'] as String),
         createdAt: DateTime.fromMillisecondsSinceEpoch(
@@ -39,6 +43,10 @@ class Article implements Model {
         content: map['content'] as String,
     );
 
+    static List<Article> fromMapList(List<Map<String, Object?>> list) => list
+        .map((x) => Article.fromMap(x))
+        .toList();
+
     @override
-    String toString() => 'Article(hash: $hash, title: $title, uri: $uri, created_at: $createdAt, content: $content)';
+    String toString() => 'Article(id: $hash, title: $title, uri: $uri, created_at: $createdAt, content: $content)';
 }

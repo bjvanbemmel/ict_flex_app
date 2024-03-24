@@ -16,8 +16,7 @@ class StorageService {
             DATABASE_PATH,
             onCreate: (db, _ ) async => await db.execute(
                 '''CREATE TABLE articles (
-                    id         INTEGER   PRIMARY KEY  AUTOINCREMENT,
-                    hash       TEXT      UNIQUE       NOT NULL,
+                    id         TEXT      PRIMARY KEY  NOT NULL,
                     title      TEXT                   NOT NULL,
                     uri        TEXT                   NOT NULL,
                     content    TEXT                   NOT NULL,
@@ -43,11 +42,11 @@ class StorageService {
     // Not implemented
     Future<void> update() async => throw UnimplementedError();
 
-    Future<void> delete(String table, String query, List<Object> args) async =>
+    Future<void> delete(Model model) async =>
         await db.delete(
-            table,
-            where: query,
-            whereArgs: args,
+            model.tableName(),
+            where: 'id = ?',
+            whereArgs: [model.id()],
         );
 
     Future<void> clear(String table) async =>

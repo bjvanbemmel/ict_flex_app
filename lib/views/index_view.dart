@@ -28,7 +28,7 @@ class _IndexViewState extends State<IndexView> {
     void initState() {
         _pageState.article = null;
         _storageService.list(Article.table).then((x) => setState(() {
-            _articles = x.map((y) => Article.fromMap(y)).toList();
+            _articles = Article.fromMapList(x);
             _fetchArticles();
         }));
 
@@ -44,24 +44,34 @@ class _IndexViewState extends State<IndexView> {
     }
 
     Future<void> _fetchArticles() async {
-        List<Article>? old = List.from(_articles ?? []);
-
         try {
+            List<Article> snapshot = List.from(_articles ?? []);
+
             List<Article> newArticles = await _feedService.articles();
             _feedState.articles = newArticles;
-            for (var art in newArticles) {
+
+            final List<Article> added = _feedService.diff(newArticles, snapshot);
+            for (var art in added) {
                 _storageService.insert(art);
+            }
+
+            final List<Article> deleted = _feedService.diff(snapshot, newArticles);
+            for (var art in deleted) {
+                _storageService.delete(art);
+            }
+
+            if (added.isEmpty && deleted.isEmpty) {
+                _newSnackbar('No new articles found');
+            } else {
+                _newSnackbar('Added ${added.length} article(s), deleted ${deleted.length} article(s)');
             }
 
         } catch (e) {
             _newSnackbar('Could not reach server');
-            _feedState.articles = (await _storageService.list(Article.table))
-                .map((x) => Article.fromMap(x)).toList();
-
-            return;
+            _feedState.articles = Article.fromMapList(
+                await _storageService.list(Article.table)
+            );
         }
-
-        if (_feedService.diff(List.from(_articles ?? []), old).isEmpty) _newSnackbar('No new articles found');
     }
 
     void _updateArticles() => setState(() {
