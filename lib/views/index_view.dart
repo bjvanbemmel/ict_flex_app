@@ -28,7 +28,6 @@ class _IndexViewState extends State<IndexView> {
 
     @override
     void initState() {
-        _pageState.article = null;
         _initItems();
 
         _feedState.addListener(_updateArticles);
@@ -57,8 +56,6 @@ class _IndexViewState extends State<IndexView> {
             List<Article> newArticles = await _feedService.articles();
             _feedState.articles = newArticles;
 
-            _feedState.reads = Read.fromMapList(await _storageService.list(Read.table));
-
             final List<Article> added = _feedService.diff(newArticles, snapshot);
             for (var art in added) {
                 _storageService.insert(art);
@@ -80,6 +77,8 @@ class _IndexViewState extends State<IndexView> {
             _feedState.articles = Article.fromMapList(
                 await _storageService.list(Article.table)
             );
+        } finally {
+            _feedState.reads = Read.fromMapList(await _storageService.list(Read.table));
         }
     }
 
@@ -109,7 +108,7 @@ class _IndexViewState extends State<IndexView> {
             ),
             child: Scaffold(
                 key: _scaffoldKey,
-                appBar: const AppBarComponent(),
+                appBar: const AppBarComponent(article: null),
                 body: ArticleListComponent(
                     articles: _articles ?? [],
                     reads: _reads ?? [],

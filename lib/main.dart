@@ -57,6 +57,7 @@ class MyApp extends StatelessWidget {
                         fontWeight: FontWeight.w400,
                     ),
                 ),
+                hoverColor: Colors.grey.shade300,
             ),
             darkTheme: ThemeData(
                 useMaterial3: true,
@@ -97,6 +98,7 @@ class MyApp extends StatelessWidget {
                         fontWeight: FontWeight.w400,
                     ),
                 ),
+                hoverColor: Colors.grey.shade800,
             ),
             themeMode: ThemeMode.system,
             home: const IndexView(),

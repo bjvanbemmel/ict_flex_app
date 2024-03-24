@@ -31,7 +31,7 @@ class ArticleView extends StatelessWidget {
         Iterable<(int, String)> splitContent = article.content.split(' ').indexed;
 
         return Scaffold(
-            appBar: const AppBarComponent(),
+            appBar: AppBarComponent(article: article),
             body: Container(
                 padding: const EdgeInsets.all(16.0),
                 child: Column(

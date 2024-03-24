@@ -8,10 +8,15 @@ import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class AppBarComponent extends StatefulWidget implements PreferredSizeWidget {
-    const AppBarComponent({super.key});
+    const AppBarComponent({
+        super.key,
+        required this.article,
+    });
 
     @override
     final Size preferredSize = const Size.fromHeight(kToolbarHeight);
+
+    final Article? article;
 
     @override
     State<AppBarComponent> createState() => _AppBarComponentState();
@@ -53,7 +58,7 @@ class _AppBarComponentState extends State<AppBarComponent> {
             icon: const Icon(Icons.share_rounded),
             tooltip: 'Share article',
             onPressed: () async {
-                Uri? uri = _pageState.article?.uri;
+                Uri? uri = widget.article?.uri;
                 if (uri == null) return;
 
                 await Share.shareUri(uri);
@@ -63,7 +68,7 @@ class _AppBarComponentState extends State<AppBarComponent> {
             icon: const Icon(Icons.open_in_browser_rounded),
             tooltip: 'Open in browser',
             onPressed: () async {
-                Uri? uri = _pageState.article?.uri;
+                Uri? uri = widget.article?.uri;
                 if (uri == null) return;
 
                 await launchUrl(uri);
@@ -118,7 +123,7 @@ class _AppBarComponentState extends State<AppBarComponent> {
             ),
             actions: <IconButton>[
                 if (_selected != null) ..._selectedActions() else
-                if (_pageState.article == null) ..._indexActions() else
+                if (widget.article == null) ..._indexActions() else
                 ..._articleActions()
             ],
         );

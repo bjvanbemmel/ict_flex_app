@@ -42,7 +42,6 @@ class _ArticleTileComponentState extends State<ArticleTileComponent> {
     Widget build(BuildContext context) {
         return InkWell(
             onTap: () {
-                _pageState.article = widget.article;
                 _pageState.selected = null;
 
                 Navigator.of(context).push(
@@ -65,15 +64,27 @@ class _ArticleTileComponentState extends State<ArticleTileComponent> {
                     ),
                 );
             },
-            onLongPress: () => _pageState.selected = widget.article,
-            child: Opacity(
-                opacity: widget.read && _selected?.hash != widget.article.hash ? 0.5 : 1,
-                child: Container(
-                    padding: const EdgeInsets.only(top: 16.0, bottom: 16.0, left: 16.0, right: 16.0),
-                    width: MediaQuery.sizeOf(context).width,
-                    decoration: _selected?.hash == widget.article.hash ? BoxDecoration(
-                        color: Colors.grey.shade300,
-                    ) : const BoxDecoration(),
+            onLongPress: () {
+                if (_pageState.selected == null) {
+                    _pageState.selected = widget.article;
+                    return;
+                }
+
+                if (_pageState.selected?.hash == widget.article.hash) {
+                    _pageState.selected = null;
+                    return;
+                }
+
+                _pageState.selected = widget.article;
+            },
+            child: Container(
+                padding: const EdgeInsets.only(top: 16.0, bottom: 16.0, left: 16.0, right: 16.0),
+                width: MediaQuery.sizeOf(context).width,
+                decoration: _selected?.hash == widget.article.hash ? BoxDecoration(
+                    color: Theme.of(context).hoverColor,
+                ) : const BoxDecoration(),
+                child: Opacity(
+                    opacity: widget.read ? 0.5 : 1.0,
                     child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
@@ -85,6 +96,7 @@ class _ArticleTileComponentState extends State<ArticleTileComponent> {
                             Text(
                                 widget.article.content,
                                 overflow: TextOverflow.ellipsis,
+                                style: Theme.of(context).textTheme.labelSmall
                             ),
                             Text(
                                 DateFormat('d MMMM yyyy').format(widget.article.createdAt),

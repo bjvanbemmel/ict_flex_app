@@ -10,13 +10,6 @@ class PageState extends ChangeNotifier {
 
     PageState._internal();
 
-    Article? _article;
-    Article? get article => _article;
-    set article(Article? newArticle) {
-        _article = newArticle;
-        notifyListeners();
-    }
-
     Article? _selected;
     Article? get selected => _selected;
     set selected(Article? newSelected) {
