@@ -14,6 +14,7 @@ class StorageService {
     Future<void> connect() async {
         db = await openDatabase(
             DATABASE_PATH,
+            onConfigure: (Database db) async => await db.execute('PRAGMA foreign_keys = ON'),
             onCreate: (db, _ ) async {
                 await db.execute('''
                     CREATE TABLE articles (

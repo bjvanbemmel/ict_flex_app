@@ -43,6 +43,7 @@ class _IndexViewState extends State<IndexView> {
 
     void _initItems() async {
         _articles = Article.fromMapList(await _storageService.list(Article.table));
+        _articles?.sort((a, b) => b.createdAt.millisecondsSinceEpoch.compareTo(a.createdAt.millisecondsSinceEpoch));
         _reads = Read.fromMapList(await _storageService.list(Read.table));
         _fetchArticles();
     }

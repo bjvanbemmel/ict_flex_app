@@ -15,6 +15,7 @@ class FeedState extends ChangeNotifier {
     List<Article> get articles => _articles;
     set articles(List<Article> newArticles) {
         _articles = newArticles;
+        _articles.sort((a, b) => b.createdAt.millisecondsSinceEpoch.compareTo(a.createdAt.millisecondsSinceEpoch));
         notifyListeners();
     }
 
