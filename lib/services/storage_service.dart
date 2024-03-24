@@ -27,9 +27,9 @@ class StorageService {
 
                 await db.execute('''
                     CREATE TABLE reads(
-                        article_id  TEXT  NOT NULL,
+                        id  TEXT  NOT NULL,
                         CONSTRAINT fk_articles
-                        FOREIGN KEY (article_id)
+                        FOREIGN KEY (id)
                         REFERENCES articles (id)
                         ON DELETE CASCADE
                     );

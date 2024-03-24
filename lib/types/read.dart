@@ -17,11 +17,11 @@ class Read extends Model<String> {
 
     @override
     Map<String, Object?> toMap() => {
-        'article_id': articleId,
+        'id': articleId,
     };
 
     static Read fromMap(Map<String, Object?> map) => Read(
-        articleId: map['article_id'] as String,
+        articleId: map['id'] as String,
     );
 
     static List<Read> fromMapList(List<Map<String, Object?>> list) => list

@@ -16,4 +16,11 @@ class PageState extends ChangeNotifier {
         _article = newArticle;
         notifyListeners();
     }
+
+    Article? _selected;
+    Article? get selected => _selected;
+    set selected(Article? newSelected) {
+        _selected = newSelected;
+        notifyListeners();
+    }
 }

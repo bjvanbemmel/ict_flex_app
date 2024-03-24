@@ -49,6 +49,8 @@ class _IndexViewState extends State<IndexView> {
     }
 
     Future<void> _fetchArticles() async {
+        _pageState.selected = null;
+
         try {
             List<Article> snapshot = List.from(_articles ?? []);
 
